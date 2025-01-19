@@ -1,26 +1,35 @@
 package Application.controller;
 
-import javafx.concurrent.Task;
+import Application.controller.gameController.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.application.Platform;
-
-import java.net.UnknownHostException;
+import javafx.stage.Stage;
+import javafx.concurrent.Task;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class WelcomeController {
+
     @FXML
     private Label userChecker;
     @FXML
     private Button submitButton;
     @FXML
     private TextField userTextField;
+
+    private Stage stage;
+    private Scene scene;
+    private Parent root;
 
     private static final String URL = "jdbc:mysql://b3p5m8nhncgiqy1daeus-mysql.services.clever-cloud.com:3306/b3p5m8nhncgiqy1daeus";
     private static final String USER = "urowmyrks8sa1rih";
@@ -88,6 +97,43 @@ public class WelcomeController {
 
         } catch (SQLException e) {
             throw e;
+        }
+    }
+
+    @FXML
+    public void easyMode(ActionEvent event) {
+        String mode  = "Easy";
+        loadGameScene(1.0, mode);
+    }
+
+    @FXML
+    public void mediumMode(ActionEvent event) {
+        String mode  = "Medium";
+        loadGameScene(3.0, mode);
+    }
+
+    @FXML
+    public void hardMode(ActionEvent event) {
+        String mode  = "Hard";
+        loadGameScene(4.5, mode);
+    }
+
+    private void loadGameScene(double fallingSpeed, String str) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Application/resources/fxmls/gameUi.fxml"));
+            root = loader.load();
+
+            gameController Obj = loader.getController();  // Get GameController instance
+            Obj.setFallingSpeed(fallingSpeed);
+
+            stage = (Stage) userTextField.getScene().getWindow();
+            scene = new Scene(root, 400, 700);
+            stage.setScene(scene);
+            stage.setTitle(str);
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

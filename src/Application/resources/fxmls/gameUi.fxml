@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="anchorPane" prefHeight="590.0" prefWidth="343.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Application.controller.gameController">
+   <children>
+      <Label layoutX="27.0" layoutY="45.0" text="Mode: " />
+      <Label layoutX="250.0" layoutY="45.0" text="Score:" />
+      <Label layoutX="69.0" layoutY="45.0" text="Easy" />
+   </children>
+</AnchorPane>
