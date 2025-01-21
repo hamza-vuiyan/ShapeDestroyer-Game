@@ -3,72 +3,126 @@ package Application.controller;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
-import javafx.scene.layout.AnchorPane; // Import AnchorPane
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
+import java.util.Optional;
 import java.util.Random;
 
 public class gameController {
+
+    @FXML
+    private Label modeLabel;
+
+    @FXML
+    private Label scoreLabel;
+
+    @FXML
+    private Pane gamePane;
+
+
     public double fallingSpeed;
 
     public void setFallingSpeed(double fallingSpeed) {
         this.fallingSpeed = fallingSpeed;
     }
 
-    @FXML
-    private AnchorPane anchorPane;  // Link to the AnchorPane in your FXML file
+    public String mode;
+
+    public void setMode(String str) {
+        this.mode = str;
+        if (modeLabel != null) {
+            modeLabel.setText("Mode: " + mode);
+        }
+    }
+
+    private int score = 0; // Keep track of the score
+    private Timeline createShapesTimeline;
+    private Timeline moveTimeline;
 
     public void initialize() {
-        // Generate random shapes every 1 second
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> createRandomShape()));
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+        startGame();
+    }
+
+    private void startGame() {
+        // Reset the score
+        score = 0;
+        scoreLabel.setText("Score: 0");
+        modeLabel.setText("Mode: " + mode);
+
+        // Create shapes periodically
+        createShapesTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> createRandomShape()));
+        createShapesTimeline.setCycleCount(Timeline.INDEFINITE);
+        createShapesTimeline.play();
+
+        // Animate shapes falling
         animateShapes();
     }
 
-    // Create random shapes (Circles or Rectangles)
     private void createRandomShape() {
         Random random = new Random();
-
-        // Randomly choose Circle or Rectangle
-        boolean isCircle = random.nextBoolean();
         javafx.scene.shape.Shape shape;
-        if (isCircle) {
-            shape = new Circle(random.nextInt(50) + 20);  // Random circle size
+
+        // Create either a circle or rectangle
+        if (random.nextBoolean()) {
+            shape = new Circle(random.nextInt(50) + 20);
             ((Circle) shape).setFill(Color.color(random.nextDouble(), random.nextDouble(), random.nextDouble()));
         } else {
-            shape = new Rectangle(random.nextInt(50) + 20, random.nextInt(50) + 20);  // Random rectangle size
+            shape = new Rectangle(random.nextInt(50) + 20, random.nextInt(50) + 20);
             ((Rectangle) shape).setFill(Color.color(random.nextDouble(), random.nextDouble(), random.nextDouble()));
         }
 
-        // Position the shape at the top (random X position)
-        shape.setLayoutX(random.nextInt((int) anchorPane.getWidth() - 50));
-        shape.setLayoutY(-shape.getBoundsInLocal().getHeight());  // Position off-screen at the top
+        // Position the shape below the labels
+        shape.setLayoutX(random.nextInt((int) gamePane.getWidth() - 50));
+        shape.setLayoutY(60); // Start just below the labels
 
-        // Add shape to the AnchorPane
-        anchorPane.getChildren().add(shape);
+        // Add the shape to the gamePane
+        gamePane.getChildren().add(shape);
     }
 
-    // Animate shapes from top to bottom
-// Animate shapes from top to bottom
     private void animateShapes() {
-        Timeline moveTimeline = new Timeline();
-        moveTimeline.setCycleCount(Timeline.INDEFINITE);
-        moveTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds(0.016), e -> {
-            for (javafx.scene.Node node : anchorPane.getChildren()) {
+        moveTimeline = new Timeline(new KeyFrame(Duration.seconds(0.016), e -> {
+            // Loop through all nodes in the AnchorPane
+            for (javafx.scene.Node node : gamePane.getChildren()) {
                 if (node instanceof javafx.scene.shape.Shape) {
-                    // Use fallingSpeed to control how much the shapes move
-                    node.setLayoutY(node.getLayoutY() + fallingSpeed);
-                    if (node.getLayoutY() > anchorPane.getHeight()) {
-                        anchorPane.getChildren().remove(node);  // Remove shape if it goes off-screen
+                    node.setLayoutY(node.getLayoutY() + fallingSpeed+1);
+                    System.out.println("Shape Y position: " + node.getLayoutY());
+                    System.out.println("gamePane height: " + gamePane.getHeight());
+                    if (node.getLayoutY() > gamePane.getHeight()) {
+                        System.out.println("Shape reached bottom");
+                        stopGame();
+                        return; // Exit immediately
                     }
                 }
             }
+
         }));
-        moveTimeline.play();
+        moveTimeline.setCycleCount(Timeline.INDEFINITE); // Timeline will repeat indefinitely
+        moveTimeline.play(); // Start the timeline
+    }
+
+    private void stopGame() {
+        System.out.println("stopGame() called"); // Debug log
+        if (createShapesTimeline != null) {
+            createShapesTimeline.stop();
+            System.out.println("createShapesTimeline stopped"); // Debug log
+        }
+        if (moveTimeline != null) {
+            moveTimeline.stop();
+            System.out.println("moveTimeline stopped"); // Debug log
+        }
+
+        gamePane.getChildren().clear(); // Optionally clear shapes
+        System.out.println("Shapes cleared"); // Debug log
+
+        // Restart or reload the game as needed
     }
 
 }

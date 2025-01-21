@@ -44,6 +44,7 @@ public class WelcomeController {
             userChecker.setText("Processing...");
             Task<Boolean> dbTask = new Task<>() {
 
+                @org.jetbrains.annotations.NotNull
                 @Override
                 protected Boolean call() throws Exception {
                     try {
@@ -100,6 +101,10 @@ public class WelcomeController {
         }
     }
 
+
+
+
+
     @FXML
     public void easyMode(ActionEvent event) {
         String mode  = "Easy";
@@ -125,11 +130,13 @@ public class WelcomeController {
 
             gameController Obj = loader.getController();  // Get GameController instance
             Obj.setFallingSpeed(fallingSpeed);
+            Obj.setMode(str);
 
             stage = (Stage) userTextField.getScene().getWindow();
             scene = new Scene(root, 400, 700);
             stage.setScene(scene);
-            stage.setTitle(str);
+            stage.setTitle("ShapeDestroyer");
+
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
