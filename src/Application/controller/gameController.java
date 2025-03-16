@@ -10,6 +10,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -17,13 +19,10 @@ import java.util.Optional;
 import java.util.Random;
 
 public class gameController {
-
     @FXML
     private Label modeLabel;
-
     @FXML
     private Label scoreLabel;
-
     @FXML
     private Pane gamePane;
 
@@ -51,6 +50,7 @@ public class gameController {
         startGame();
     }
 
+
     private void startGame() {
         // Reset the score
         score = 0;
@@ -62,26 +62,49 @@ public class gameController {
         createShapesTimeline.setCycleCount(Timeline.INDEFINITE);
         createShapesTimeline.play();
 
-        // Animate shapes falling
         animateShapes();
     }
+    private Color getRandomColor() {
+        Random random = new Random();
+        double r, g, b;
+
+        do {
+            r = random.nextDouble();
+            g = random.nextDouble();
+            b = random.nextDouble();
+        } while (r > 1 && g > 1 && b > 1); // Avoid near-white colors
+
+        return Color.color(r, g, b);
+    }
+
 
     private void createRandomShape() {
+
         Random random = new Random();
         javafx.scene.shape.Shape shape;
 
-        // Create either a circle or rectangle
+        double minShapeSize = 30;
+        double maxShapeSize = 70;
+
         if (random.nextBoolean()) {
-            shape = new Circle(random.nextInt(50) + 20);
-            ((Circle) shape).setFill(Color.color(random.nextDouble(), random.nextDouble(), random.nextDouble()));
+            double radius = minShapeSize + random.nextDouble() * (maxShapeSize- minShapeSize);
+
+            shape = new Circle(radius);
+            ((Circle) shape).setFill(getRandomColor());
         } else {
-            shape = new Rectangle(random.nextInt(50) + 20, random.nextInt(50) + 20);
-            ((Rectangle) shape).setFill(Color.color(random.nextDouble(), random.nextDouble(), random.nextDouble()));
+            double width = minShapeSize + random.nextDouble() * (maxShapeSize-minShapeSize);
+            double height = minShapeSize + random.nextDouble() * (maxShapeSize-minShapeSize);
+
+            shape = new Rectangle(width, height);
+            ((Rectangle) shape).setFill(getRandomColor());
         }
 
-        // Position the shape below the labels
-        shape.setLayoutX(random.nextInt((int) gamePane.getWidth() - 50));
+        double minX = 10; // Small gap from the left
+        double maxX = gamePane.getWidth() - shape.getBoundsInLocal().getWidth() - minX;
+
+        shape.setLayoutX(minX + random.nextDouble()*maxX);
         shape.setLayoutY(60); // Start just below the labels
+
         shape.setOnMouseClicked(event -> {
             gamePane.getChildren().remove(shape);
             score+=5;
@@ -99,7 +122,7 @@ public class gameController {
                     if (node.getLayoutY() > gamePane.getHeight()) {
                         System.out.println("Shape reached bottom");
                         stopGame();
-                        return; // Exit immediately
+                        return; 
                     }
                 }
             }
@@ -110,15 +133,14 @@ public class gameController {
     }
 
     private void stopGame() {
-        System.out.println("stopGame() called"); // Debug log
+        System.out.println("stopGame() called");
         if (createShapesTimeline != null) {
             createShapesTimeline.stop();
         }
         if (moveTimeline != null) {
             moveTimeline.stop();
         }
-
-        gamePane.getChildren().clear(); // Optionally clear shapes
+        gamePane.getChildren().clear();
         // Restart or reload the game as needed
     }
 
