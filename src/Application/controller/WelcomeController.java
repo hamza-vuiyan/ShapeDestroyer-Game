@@ -40,50 +40,27 @@ public class WelcomeController {
         if (userName.isEmpty()) {
             userChecker.setText("Please enter a username!");
             return;
-        } else {
-            userChecker.setText("Processing...");
-            Task<Boolean> dbTask = new Task<>() {
-
-                @org.jetbrains.annotations.NotNull
-                @Override
-                protected Boolean call() throws Exception {
-                    try {
-                        return addPlayer(userName);
-                    } catch (SQLException e) {
-                        if (e.getMessage().contains("Communications link failure")) {
-                            throw new Exception("No Internet! Please check your connection.");
-                        } else if (e.getSQLState().equals("23000")) {
-                            throw new Exception("Username already exists. Try another.");
-                        } else {
-                            throw new Exception("Database error: " + e.getMessage());
-                        }
-                    } catch (Exception e) {
-                        throw new Exception("Unexpected error: " + e.getMessage());
-                    }
-                }
-
-                @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    boolean success = getValue(); // need to know why this
-                    if (success) {
-                        userChecker.setText("Player added successfully!");
-                    } else {
-                        userChecker.setText("Username isn't available. Try another.");
-                    }
-                }
-
-                @Override
-                protected void failed() {
-                    super.failed();
-                    Throwable exception = getException();
-                    userChecker.setText(exception.getMessage());
-                }
-            };
-
-            new Thread(dbTask).start();
+        }
+        try {
+            boolean success = addPlayer(userName);
+            if (success) {
+                userChecker.setText("Player added successfully!");
+            } else {
+                userChecker.setText("Username isn't available. Try another.");
+            }
+        } catch (SQLException e) {
+            if (e.getMessage().contains("Communications link failure")) {
+                userChecker.setText("No Internet! Please check your connection.");
+            } else if ("23000".equals(e.getSQLState())) {
+                userChecker.setText("Username already exists. Try another.");
+            } else {
+                userChecker.setText("Database error: " + e.getMessage());
+            }
+        } catch (Exception e) {
+            userChecker.setText("Unexpected error: " + e.getMessage());
         }
     }
+
 
     public boolean addPlayer(String playerName) throws SQLException {
         String insertQuery = "INSERT INTO players (name) VALUES (?)";
@@ -128,7 +105,7 @@ public class WelcomeController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Application/resources/fxmls/gameUi.fxml"));
             root = loader.load();
 
-            gameController Obj = loader.getController();  // Get GameController instance
+            gameController Obj = loader.getController();
             Obj.setFallingSpeed(fallingSpeed);
             Obj.setMode(str);
 

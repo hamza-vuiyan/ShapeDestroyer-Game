@@ -82,19 +82,20 @@ public class gameController {
         // Position the shape below the labels
         shape.setLayoutX(random.nextInt((int) gamePane.getWidth() - 50));
         shape.setLayoutY(60); // Start just below the labels
+        shape.setOnMouseClicked(event -> {
+            gamePane.getChildren().remove(shape);
+            score+=5;
+             scoreLabel.setText(String.valueOf(score));
+        });
 
-        // Add the shape to the gamePane
         gamePane.getChildren().add(shape);
     }
 
     private void animateShapes() {
         moveTimeline = new Timeline(new KeyFrame(Duration.seconds(0.016), e -> {
-            // Loop through all nodes in the AnchorPane
             for (javafx.scene.Node node : gamePane.getChildren()) {
                 if (node instanceof javafx.scene.shape.Shape) {
                     node.setLayoutY(node.getLayoutY() + fallingSpeed+1);
-                    System.out.println("Shape Y position: " + node.getLayoutY());
-                    System.out.println("gamePane height: " + gamePane.getHeight());
                     if (node.getLayoutY() > gamePane.getHeight()) {
                         System.out.println("Shape reached bottom");
                         stopGame();
@@ -112,16 +113,12 @@ public class gameController {
         System.out.println("stopGame() called"); // Debug log
         if (createShapesTimeline != null) {
             createShapesTimeline.stop();
-            System.out.println("createShapesTimeline stopped"); // Debug log
         }
         if (moveTimeline != null) {
             moveTimeline.stop();
-            System.out.println("moveTimeline stopped"); // Debug log
         }
 
         gamePane.getChildren().clear(); // Optionally clear shapes
-        System.out.println("Shapes cleared"); // Debug log
-
         // Restart or reload the game as needed
     }
 

@@ -6,9 +6,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700" prefWidth="400" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Application.controller.WelcomeController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700" prefWidth="400" style="-fx-background-color: #94ddf8;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Application.controller.WelcomeController">
    <children>
-      <Label layoutX="142.0" layoutY="48.0" prefHeight="33.0" prefWidth="116.0" text="Welcome " textAlignment="CENTER">
+      <Label layoutX="163.0" layoutY="48.0" prefHeight="33.0" prefWidth="107.0" text="Welcome " textAlignment="CENTER">
          <font>
             <Font size="23.0" />
          </font>
@@ -19,7 +19,8 @@
       <Button layoutX="151.0" layoutY="324.0" mnemonicParsing="false" onAction="#mediumMode" prefHeight="26.0" prefWidth="98.0" text="Medium" />
       <Button layoutX="151.0" layoutY="366.0" mnemonicParsing="false" onAction="#hardMode" prefHeight="26.0" prefWidth="98.0" text="Hard" />
       <Label layoutX="131.0" layoutY="245.0" text="Choose Difficulty Level" />
-      <Label fx:id="userChecker" layoutX="38.0" layoutY="207.0" prefHeight="18.0" prefWidth="324.0" text="?" wrapText="true" />
+      <Label fx:id="userChecker" layoutX="93.0" layoutY="207.0" prefHeight="18.0" prefWidth="183.0" text="?" wrapText="true" />
       <Button layoutX="167.0" layoutY="167.0" mnemonicParsing="false" onAction="#submitUser" prefHeight="26.0" prefWidth="66.0" text="Submit" />
+      <Label layoutX="41.0" layoutY="207.0" prefHeight="18.0" prefWidth="52.0" text="Status" wrapText="true" />
    </children>
 </AnchorPane>
