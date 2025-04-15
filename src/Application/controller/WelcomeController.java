@@ -30,7 +30,6 @@ public class WelcomeController {
     private Stage stage;
     private Scene scene;
     private Parent root;
-
     private static final String URL = "jdbc:mysql://b3p5m8nhncgiqy1daeus-mysql.services.clever-cloud.com:3306/b3p5m8nhncgiqy1daeus";
     private static final String USER = "urowmyrks8sa1rih";
     private static final String PASSWORD = "RsKRqsn19uGmkebas6WR";
@@ -67,10 +66,8 @@ public class WelcomeController {
 
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
-
             preparedStatement.setString(1, playerName);
             int rowsAffected = preparedStatement.executeUpdate();
-
             return rowsAffected > 0;
 
         } catch (SQLException e) {
@@ -104,7 +101,6 @@ public class WelcomeController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Application/resources/fxmls/gameUi.fxml"));
             root = loader.load();
-
             gameController Obj = loader.getController();
             Obj.setFallingSpeed(fallingSpeed);
             Obj.setMode(str);

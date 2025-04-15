@@ -2,7 +2,11 @@ package Application.controller;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -13,8 +17,10 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 import javafx.util.Duration;
-
+import javafx.scene.shape.Shape;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.Random;
 
@@ -26,6 +32,9 @@ public class gameController {
     @FXML
     private Pane gamePane;
 
+    private Stage stage;
+    private Scene scene;
+    private Parent root;
 
     public double fallingSpeed;
 
@@ -57,31 +66,23 @@ public class gameController {
         scoreLabel.setText("Score: 0");
         modeLabel.setText("Mode: " + mode);
 
-        // Create shapes periodically
-        createShapesTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> createRandomShape()));
+        //"createShapesTimeline" a javafx timeline (runs same code repeatedly after a fixed time period)
+
+        // Create shapes periodically (but don't move it)
+        createShapesTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e ->{
+            createRandomShape();
+        }));
+
         createShapesTimeline.setCycleCount(Timeline.INDEFINITE);
-        createShapesTimeline.play();
+        createShapesTimeline.play(); //starts the timeline
 
-        animateShapes();
+        animateShapes(); // moves the already created shapes
+
     }
-    private Color getRandomColor() {
-        Random random = new Random();
-        double r, g, b;
-
-        do {
-            r = random.nextDouble();
-            g = random.nextDouble();
-            b = random.nextDouble();
-        } while (r > 1 && g > 1 && b > 1); // Avoid near-white colors
-
-        return Color.color(r, g, b);
-    }
-
 
     private void createRandomShape() {
-
         Random random = new Random();
-        javafx.scene.shape.Shape shape;
+        Shape shape;
 
         double minShapeSize = 30;
         double maxShapeSize = 70;
@@ -108,7 +109,7 @@ public class gameController {
         shape.setOnMouseClicked(event -> {
             gamePane.getChildren().remove(shape);
             score+=5;
-             scoreLabel.setText(String.valueOf(score));
+            scoreLabel.setText(String.valueOf(score));
         });
 
         gamePane.getChildren().add(shape);
@@ -118,11 +119,13 @@ public class gameController {
         moveTimeline = new Timeline(new KeyFrame(Duration.seconds(0.016), e -> {
             for (javafx.scene.Node node : gamePane.getChildren()) {
                 if (node instanceof javafx.scene.shape.Shape) {
-                    node.setLayoutY(node.getLayoutY() + fallingSpeed+1);
+                    node.setLayoutY(node.getLayoutY() + fallingSpeed);
+
+                    //stops the game
                     if (node.getLayoutY() > gamePane.getHeight()) {
                         System.out.println("Shape reached bottom");
                         stopGame();
-                        return; 
+                        return;
                     }
                 }
             }
@@ -134,14 +137,35 @@ public class gameController {
 
     private void stopGame() {
         System.out.println("stopGame() called");
-        if (createShapesTimeline != null) {
+
+        //if (createShapesTimeline != null) {
             createShapesTimeline.stop();
-        }
-        if (moveTimeline != null) {
+       // }
+
+        //if (moveTimeline != null) {
             moveTimeline.stop();
-        }
+       // }
+
         gamePane.getChildren().clear();
-        // Restart or reload the game as needed
     }
 
+
+    private Color getRandomColor() {
+        Random random = new Random();
+        double r, g, b;
+
+        do {
+            r = random.nextDouble();
+            g = random.nextDouble();
+            b = random.nextDouble();
+        } while (r > 1 && g > 1 && b > 1); // Avoid near-white colors
+
+        return Color.color(r, g, b);
+    }
+
+
+
 }
+
+
+
