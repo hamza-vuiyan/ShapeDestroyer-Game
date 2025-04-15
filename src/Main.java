@@ -11,6 +11,7 @@ public class Main extends Application {
             Scene scene = new Scene(root, 400, 700);
             primaryStage.setScene(scene);
             primaryStage.setResizable(false);
+            primaryStage.setTitle("Shape Destroyer");
             primaryStage.show();
     }
 

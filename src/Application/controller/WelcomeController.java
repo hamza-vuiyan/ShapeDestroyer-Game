@@ -108,7 +108,7 @@ public class WelcomeController {
             stage = (Stage) userTextField.getScene().getWindow();
             scene = new Scene(root, 400, 700);
             stage.setScene(scene);
-            stage.setTitle("ShapeDestroyer");
+            stage.setTitle("Shape Destroyer");
 
             stage.setResizable(false);
             stage.show();
